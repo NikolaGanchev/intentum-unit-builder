@@ -8,7 +8,7 @@ import tokenizer.Token;
 import java.util.ArrayList;
 
 public class Builder {
-    private static final String BEGIN_STATEMENT = "public function %s(props: any) {\n";
+    private static final String BEGIN_STATEMENT = "export default function %s(props: any) {\n";
     public static final String USE_TRANSLATION = "const [tl] = useTranslation(\"lessons\");\n";
     private static final String RETURN_STATEMENT = "\nreturn ";
     private static final String END_STATEMENT = "; \n}";
@@ -31,6 +31,9 @@ public class Builder {
         for (Token token : tokens) {
             evaluateToken(token);
         }
+
+        this.currentElement.addElement(ComponentStrings.END_BUTTON)
+                .addAttribute("onClick", "{() => { props.endUnit() }}");
 
         PrintableResult result = new PrintableResult(
                 new String[] {
@@ -76,7 +79,7 @@ public class Builder {
                 this.currentElement.addElement(ComponentStrings.TEST_QUESTION)
                         .addAttribute("answers", "{}")
                         .addAttribute("rightAnswer", "{}")
-                        .addAttribute("tries", "3")
+                        .addAttribute("tries", "{3}")
                         .addAttribute("onAnswer",
                                 ComponentStrings.ON_ANSWER
                                         .formatted(lockNumber))

@@ -23,7 +23,7 @@ public class Main {
         ArrayList<Token> tokens = tokenizer.tokenize();
         LockManager lockManager = new LockManager();
 
-        Builder builder = new Builder("l1", tokens, lockManager);
+        Builder builder = new Builder("l3", tokens, lockManager);
 
         PrintableResult result = builder.build();
 

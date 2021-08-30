@@ -37,6 +37,7 @@ public class ComponentStrings {
 
     public static final String TIP = "Tip";
 
-    public static final String WARNING = "WARNING";
+    public static final String WARNING = "Warning";
+
     public static final String END_BUTTON = "EndButton";
 }

@@ -24,7 +24,6 @@ public class PrintableResult {
             OutputFormat format = OutputFormat.createPrettyPrint();
             XMLWriter writer = new XMLWriter(System.out, format);
             writer.write(document);
-            writer.close();
         }
         catch (IOException e) {
             System.err.print("Unable to print because of the following error:");

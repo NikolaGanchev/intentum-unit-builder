@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
@@ -23,7 +24,10 @@ public class Main {
         ArrayList<Token> tokens = tokenizer.tokenize();
         LockManager lockManager = new LockManager();
 
-        Builder builder = new Builder("l3", tokens, lockManager);
+        Scanner in = new Scanner(System.in);
+        String lessonToken = in.nextLine();
+
+        Builder builder = new Builder(lessonToken, tokens, lockManager);
 
         PrintableResult result = builder.build();
 

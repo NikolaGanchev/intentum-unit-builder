@@ -26,4 +26,6 @@ public class Identifiers {
     public static final String TIP = "t";
 
     public static final String WARNING = "w";
+    
+    public static final String ANSWER = "a";
 }

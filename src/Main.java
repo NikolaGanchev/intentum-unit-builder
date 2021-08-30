@@ -1,4 +1,5 @@
 import builder.Builder;
+import builder.ImportManager;
 import builder.LockManager;
 import builder.PrintableResult;
 import tokenizer.Token;
@@ -23,11 +24,13 @@ public class Main {
 
         ArrayList<Token> tokens = tokenizer.tokenize();
         LockManager lockManager = new LockManager();
+        ImportManager importManager = new ImportManager();
+        importManager.addExpectedImports();
 
         Scanner in = new Scanner(System.in);
         String lessonToken = in.nextLine();
 
-        Builder builder = new Builder(lessonToken, tokens, lockManager);
+        Builder builder = new Builder(lessonToken, tokens, lockManager, importManager);
 
         PrintableResult result = builder.build();
 

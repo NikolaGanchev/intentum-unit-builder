@@ -1,8 +1,10 @@
 package tokenizer;
 
+import builder.Identifiers;
 import tokenizer.Token;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class Tokenizer {
     private ArrayList<String> tokenStrings;
@@ -23,9 +25,18 @@ public class Tokenizer {
 
     public ArrayList<Token> tokenize() {
         tokens = new ArrayList<>();
+        Token lastToken = null;
 
         for (String tokenString : tokenStrings) {
             Token token = new Token(tokenString);
+
+            if (token.getIdentifier().startsWith(Identifiers.ANSWER) && lastToken != null) {
+                lastToken.registerRelated(token);
+                continue;
+            }
+
+            lastToken = token;
+
             tokens.add(token);
         }
 

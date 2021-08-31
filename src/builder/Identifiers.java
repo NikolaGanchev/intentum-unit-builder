@@ -19,7 +19,7 @@ public class Identifiers {
 
     public static final String ERROR = "e";
 
-    public static final String FILL_QUESTION = "fillq";
+    public static final String FILL_QUESTION = "fiq";
 
     public static final String QUOTE = "q";
 

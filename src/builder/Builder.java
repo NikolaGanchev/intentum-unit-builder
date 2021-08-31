@@ -44,6 +44,7 @@ public class Builder {
 
         BuildResult result = new BuildResult(
                         importManager.getImportState(),
+                        "\n",
                         BEGIN_STATEMENT.formatted(lessonToken.toUpperCase()),
                         USE_TRANSLATION,
                         lockManager.getLockState(),

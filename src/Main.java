@@ -1,9 +1,8 @@
-import builder.Builder;
-import builder.ImportManager;
-import builder.LockManager;
-import builder.PrintableResult;
+import builder.*;
 import tokenizer.Token;
 import tokenizer.Tokenizer;
+import transformers.DocumentToPrettyStringTransformer;
+import transformers.ResultTransformer;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -32,8 +31,10 @@ public class Main {
 
         Builder builder = new Builder(lessonToken, tokens, lockManager, importManager);
 
-        PrintableResult result = builder.build();
+        BuildResult result = builder.build(new DocumentToPrettyStringTransformer());
 
-        result.prettyPrint();
+        ResultTransformer resultTransformer = new ResultTransformer();
+
+        System.out.println(resultTransformer.transform(result.getResult()));
     }
 }

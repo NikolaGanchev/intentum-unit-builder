@@ -4,6 +4,7 @@ import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import tokenizer.Token;
+import transformers.Transformer;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,7 +29,7 @@ public class Builder {
         this.importManager = importManager;
     }
 
-    public PrintableResult build() {
+    public BuildResult build(Transformer<String, Document> transformer) {
         this.document = DocumentHelper.createDocument();
         this.currentElement = document.addElement("div");
 
@@ -39,18 +40,16 @@ public class Builder {
         this.currentElement.addElement(ComponentStrings.END_BUTTON)
                 .addAttribute("onClick", "{() => { props.endUnit() }}");
 
-        PrintableResult result = new PrintableResult(
-                new String[] {
+        String documentString = transformer.transform(document);
+
+        BuildResult result = new BuildResult(
                         importManager.getImportState(),
                         BEGIN_STATEMENT.formatted(lessonToken.toUpperCase()),
                         USE_TRANSLATION,
                         lockManager.getLockState(),
-                        RETURN_STATEMENT
-                        },
-                document,
-                new String[] {
-                        END_STATEMENT
-                });
+                        RETURN_STATEMENT,
+                        documentString,
+                        END_STATEMENT);
 
         return result;
     }

@@ -2,7 +2,7 @@ package transformers;
 
 import java.util.ArrayList;
 
-public class StringArrayListToSingleLine implements Transformer<String, ArrayList<String>> {
+public class StringArrayListToSingleLineTransformer implements Transformer<String, ArrayList<String>> {
     @Override
     public String transform(ArrayList<String> lines) {
         StringBuilder result = new StringBuilder();

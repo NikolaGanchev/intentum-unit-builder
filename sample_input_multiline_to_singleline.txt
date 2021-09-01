@@ -1,0 +1,6 @@
+{
+  "ime": "Gosho",
+  "email": "gosho@email.email",
+  "parola": "dobraparola",
+  "vuzrast": 18
+}

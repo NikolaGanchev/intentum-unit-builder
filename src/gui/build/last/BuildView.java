@@ -1,11 +1,11 @@
-package gui;
+package gui.build.last;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-public class View {
+public class BuildView {
     private JFrame frame;
     private JTextArea inputArea;
     private JTextArea resultArea;
@@ -13,8 +13,9 @@ public class View {
     private JCheckBox isMultilineToSingleLine;
     private JButton buildButton;
     private JButton copyButton;
+    private JButton createJSONButton;
 
-    public View() {
+    public BuildView() {
         this.frame = new JFrame("Intentum unit builder");
 
         Image icon = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB_PRE);
@@ -28,8 +29,11 @@ public class View {
         panel.setBorder(new EmptyBorder(10, 10, 10, 10));
         frame.add(panel);
 
+        this.createJSONButton = new JButton("Създай");
+        panel.add(justifyLeft(this.createJSONButton));
+
         JLabel inputLabel = new JLabel("Вход");
-        panel.add(inputLabel);
+        panel.add(justifyLeft(inputLabel));
 
         this.inputArea = new JTextArea();
         this.inputArea.setEditable(true);
@@ -40,17 +44,17 @@ public class View {
 
         this.isMultilineToSingleLine = new JCheckBox("Няколко реда към един ред");
         this.isMultilineToSingleLine.setBorder(new EmptyBorder(10, 10, 10, 10));
-        panel.add(isMultilineToSingleLine);
+        panel.add(justifyLeft(isMultilineToSingleLine));
 
         JLabel idLabel = new JLabel("Идентификатор");
-        panel.add(idLabel);
+        panel.add(justifyLeft(idLabel));
 
         this.idField = new JTextField("");
         this.idField.setMaximumSize(new Dimension(panel.getMaximumSize().width, idField.getPreferredSize().height));
         panel.add(idField);
 
         JPanel buttonPanel = new JPanel();
-        panel.add(buttonPanel);
+        panel.add(justifyLeft(buttonPanel));
 
         this.buildButton = new JButton("Създай");
         buttonPanel.add(buildButton);
@@ -60,7 +64,7 @@ public class View {
         buttonPanel.setMaximumSize(buttonPanel.getPreferredSize());
 
         JLabel resultLabel = new JLabel("Резултат");
-        panel.add(resultLabel);
+        panel.add(justifyLeft(resultLabel));
 
         this.resultArea = new JTextArea();
         this.resultArea.setEditable(false);
@@ -73,6 +77,10 @@ public class View {
     public void show() {
         this.frame.setVisible(true);
     }
+
+    public JFrame getFrame() {
+        return frame;
+    };
 
     public JTextArea getInputArea() {
         return inputArea;
@@ -96,5 +104,16 @@ public class View {
 
     public JButton getCopyButton() {
         return copyButton;
+    }
+
+    public JButton getCreateJSONButton() {
+        return createJSONButton;
+    }
+
+    private Component justifyLeft(Component component)  {
+        Box box = Box.createHorizontalBox();
+        box.add(component);
+        box.add(Box.createHorizontalGlue());
+        return box;
     }
 }

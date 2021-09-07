@@ -1,14 +1,14 @@
-package gui;
+package gui.build.last;
 
-public class Model {
+public class BuildModel {
     private String input;
     private String result;
     private boolean isMultilineToSingleLineMode;
     private String unitId;
-    private View view;
+    private BuildView buildView;
 
-    public void registerListener(View view) {
-        this.view = view;
+    public void registerListener(BuildView buildView) {
+        this.buildView = buildView;
     }
 
     public String getInput() {

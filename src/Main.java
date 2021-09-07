@@ -1,12 +1,12 @@
-import gui.Presenter;
-import gui.Model;
-import gui.View;
+
+import gui.build.last.BuildModel;
+import gui.build.last.BuildPresenter;
+import gui.build.last.BuildView;
 
 public class Main {
-    static boolean multilineToSingleLine = false;
 
     public static void main(String[] args) {
-        Presenter presenter = new Presenter(new Model(), new View());
+        BuildPresenter presenter = new BuildPresenter(new BuildModel(), new BuildView());
         presenter.init();
     }
 }

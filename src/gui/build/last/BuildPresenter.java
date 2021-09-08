@@ -1,12 +1,14 @@
 package gui.build.last;
 
-import builder.BuildResult;
-import builder.Builder;
-import builder.ImportManager;
-import builder.LockManager;
+import builder.*;
+import builder.json.TokenIterator;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 import gui.build.json.gui.JSONModel;
 import gui.build.json.gui.JSONPresenter;
 import gui.build.json.gui.JSONView;
+import gui.build.json.gui.ResultView;
 import tokenizer.Token;
 import tokenizer.Tokenizer;
 import transformers.DocumentToPrettyStringTransformer;
@@ -21,6 +23,7 @@ import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 public class BuildPresenter {
@@ -53,7 +56,14 @@ public class BuildPresenter {
             buildModel.setMultilineToSingleLineMode(buildView.getIsMultilineToSingleLine().isSelected());
             buildView.getIdField().setEnabled(!buildModel.isMultilineToSingleLineMode());
         });
-        buildView.getBuildButton().addActionListener((ActionEvent e) -> { build(); });
+        buildView.getBuildButton().addActionListener((ActionEvent e) -> {
+            Tokenizer tokenizer = new Tokenizer();
+
+            ArrayList<String> lines = new MultilineStringToArrayListTransformer().transform(buildModel.getInput());
+
+            lines.forEach(tokenizer::addString);
+            build(tokenizer, buildModel.isMultilineToSingleLineMode());
+        });
         buildView.getCopyButton().addActionListener((ActionEvent e) -> { copyResultToClipboard(); });
         buildView.getCreateJSONButton().addActionListener((ActionEvent e) -> { initCreateJSON(); });
         buildView.show();
@@ -72,12 +82,35 @@ public class BuildPresenter {
     }
 
     private void initCreateJSON() {
-        JSONPresenter presenter = new JSONPresenter(new JSONModel(), new JSONView());
+        JSONPresenter presenter = new JSONPresenter(
+                new JSONModel(new JsonObject(), new Tokenizer()),
+                new JSONView(),
+                new TokenIterator());
+        presenter.setCreateEvent((jsonObject, tokenizer) -> {
+            String json = new GsonBuilder().setPrettyPrinting().create().toJson(jsonObject);
+            ArrayList<Token> tokens = tokenizer.tokenize();
+            for (Token token: tokens) {
+                buildView.getInputArea().append(token.getToken() + "\n");
+            }
+
+            showJson(json);
+
+            build(tokens, false);
+        });
         presenter.init();
     }
 
-    private void build() {
-        if (buildModel.isMultilineToSingleLineMode()) {
+    private void showJson(String json) {
+        ResultView resultView = new ResultView(json);
+        resultView.show();
+    }
+
+    private void build(Tokenizer tokenizer, boolean isMultilineToSingleLineMode) {
+        build(tokenizer.tokenize(), isMultilineToSingleLineMode);
+    }
+
+    private void build(ArrayList<Token> tokens, boolean isMultilineToSingleLineMode) {
+        if (isMultilineToSingleLineMode) {
             ArrayList<String> lines = new MultilineStringToArrayListTransformer().transform(buildModel.getInput());
 
             String result = new StringArrayListToSingleLineTransformer().transform(lines);
@@ -86,13 +119,6 @@ public class BuildPresenter {
             buildView.getResultArea().setText(result);
         }
         else {
-            Tokenizer tokenizer = new Tokenizer();
-
-            ArrayList<String> lines = new MultilineStringToArrayListTransformer().transform(buildModel.getInput());
-
-            lines.forEach(tokenizer::addString);
-
-            ArrayList<Token> tokens = tokenizer.tokenize();
             LockManager lockManager = new LockManager();
             ImportManager importManager = new ImportManager();
             importManager.addExpectedImports();

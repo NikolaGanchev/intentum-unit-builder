@@ -1,6 +1,7 @@
 package gui.build.json.gui;
 
 import javax.swing.*;
+import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import java.awt.*;
@@ -13,6 +14,7 @@ public class JSONView {
     private JTextArea document;
     private JButton nextButton;
     private JButton finishButton;
+    private JButton transformToSingleLineButton;
 
     public JSONView() {
         this.frame = new JFrame("Intentum JSON creator");
@@ -27,19 +29,32 @@ public class JSONView {
         panel.setBorder(new EmptyBorder(10, 10, 10, 10));
         frame.add(panel);
 
+        JPanel inputs = new JPanel();
+        inputs.setLayout(new BoxLayout(inputs, BoxLayout.Y_AXIS));
+        inputs.setBorder(new EmptyBorder(10, 10, 10, 10));
+        panel.add(inputs);
+
         keyInput = new JTextField();
-        panel.add(keyInput);
-        keyInput.setBorder(new LineBorder(Color.BLACK));
+        keyInput.setMaximumSize(
+                new Dimension(keyInput.getMaximumSize().width, keyInput.getPreferredSize().height));
+        keyInput.setBorder(
+                new CompoundBorder(
+                        new LineBorder(Color.BLACK),
+                        new EmptyBorder(10, 10, 10, 10)));
+        inputs.add(keyInput);
 
         document = new JTextArea();
         document.setBorder(new EmptyBorder(10, 10, 10, 10));
         JScrollPane documentScrollPane = new JScrollPane(document,
                 JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        panel.add(documentScrollPane);
+        inputs.add(documentScrollPane);
 
         JPanel buttons = new JPanel();
         buttons.setLayout(new BoxLayout(buttons, BoxLayout.Y_AXIS));
         buttons.setBorder(new EmptyBorder(10, 10, 10, 10));
+
+        transformToSingleLineButton = new JButton("Един ред");
+        buttons.add(transformToSingleLineButton);
 
         nextButton = new JButton("Следващ");
         buttons.add(nextButton);
@@ -56,5 +71,25 @@ public class JSONView {
 
     public JFrame getFrame() {
         return frame;
+    }
+
+    public JTextField getKeyInput() {
+        return keyInput;
+    }
+
+    public JTextArea getDocument() {
+        return document;
+    }
+
+    public JButton getNextButton() {
+        return nextButton;
+    }
+
+    public JButton getFinishButton() {
+        return finishButton;
+    }
+
+    public JButton getTransformToSingleLineButton() {
+        return transformToSingleLineButton;
     }
 }

@@ -12,6 +12,7 @@ public class JSONModel {
     private String currentDocument;
     private Tokenizer tokens;
     private JsonObject jsonObject;
+    private boolean stopIncrementing;
 
     public JSONModel(JsonObject obj, Tokenizer tokens) {
         this.jsonObject = obj;
@@ -48,6 +49,14 @@ public class JSONModel {
 
     public void setJsonObject(JsonObject object) {
         this.jsonObject = object;
+    }
+
+    public boolean isStopIncrementing() {
+        return stopIncrementing;
+    }
+
+    public void setStopIncrementing(boolean stopIncrementing) {
+        this.stopIncrementing = stopIncrementing;
     }
 
     public void addTranslationPair(TranslationPair translationPair, boolean sterialize) {

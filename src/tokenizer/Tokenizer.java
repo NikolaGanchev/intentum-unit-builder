@@ -32,6 +32,7 @@ public class Tokenizer {
 
             if (token.getIdentifier().startsWith(Identifiers.ANSWER) && lastToken != null) {
                 lastToken.registerRelated(token);
+                tokens.add(token);
                 continue;
             }
 

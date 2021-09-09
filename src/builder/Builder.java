@@ -15,12 +15,17 @@ public class Builder {
     public static final String USE_TRANSLATION = "const [tl] = useTranslation(\"lessons\");\n";
     private static final String RETURN_STATEMENT = "\nreturn ";
     private static final String END_STATEMENT = "; \n}";
+    private static final String IS_SHOWING_STATE = "const [isShowing, setIsShowing] = useState(false);\n";
+    private static final String IS_EXITING_STATE = "const [hasClickedCheck, setHasClickedCheck] = useState(false);\n";
+    private static final String USE_TRANSLATION_REGULAR = "const [t] = useTranslation(\"common\");\n";
     private final String lessonToken;
     private final ArrayList<Token> tokens;
     private Document document;
     private final LockManager lockManager;
     private final ImportManager importManager;
     private Element currentElement;
+    private boolean hasControlledQuestion = false;
+
 
     public Builder(String lessonToken, ArrayList<Token> tokens, LockManager lockManager, ImportManager importManager) {
         this.lessonToken = lessonToken;
@@ -36,9 +41,20 @@ public class Builder {
         for (Token token : tokens) {
             evaluateToken(token);
         }
+        if (hasControlledQuestion) {
 
-        this.currentElement.addElement(ComponentStrings.END_BUTTON)
-                .addAttribute("onClick", "{() => { props.endUnit() }}");
+            this.currentElement.addElement(ComponentStrings.END_BUTTON)
+                    .addAttribute("text", "{hasClickedCheck? t(\"app.end\"): t(\"app.check\")}")
+                    .addAttribute("onClick", "{() => { if (hasClickedCheck) " +
+                            "{ props.endUnit() } " +
+                            "else { setIsShowing(true); " +
+                            "setHasClickedCheck(true); }}}");
+        }
+        else {
+            this.currentElement.addElement(ComponentStrings.END_BUTTON)
+                    .addAttribute("onClick", "{() => { props.endUnit() }}");
+        }
+
 
         String documentString = transformer.transform(document);
 
@@ -47,6 +63,7 @@ public class Builder {
                         "\n",
                         BEGIN_STATEMENT.formatted(lessonToken.toUpperCase()),
                         USE_TRANSLATION,
+                        (hasControlledQuestion? USE_TRANSLATION_REGULAR + IS_SHOWING_STATE + IS_EXITING_STATE: ""),
                         lockManager.getLockState(),
                         RETURN_STATEMENT,
                         documentString,
@@ -132,6 +149,55 @@ public class Builder {
 
                 this.importManager.addComponentImport(ComponentStrings.FULL_ANSWER_QUESTION);
                 this.importManager.addComponentImport(ComponentStrings.LOCK);
+            }
+            case Identifiers.CONTROLLED_TEST_QUESTION -> {
+                hasControlledQuestion = true;
+
+                String answers = "{}";
+
+                if (token.hasRelated()) {
+                    answers = constructAnswersFromRelated(token);
+                }
+
+                this.currentElement.addElement(ComponentStrings.TEST_QUESTION)
+                        .addAttribute("answers", answers)
+                        .addAttribute("rightAnswer", "{}")
+                        .addAttribute("isShowing", "{isShowing}")
+                        .addText(getTranslationString(token));
+
+                this.importManager.addComponentImport(ComponentStrings.TEST_QUESTION);
+                this.importManager.addStateImport();
+            }
+            case Identifiers.CONTROLLED_FULL_ANSWER_QUESTION -> {
+                hasControlledQuestion = true;
+                int answersSize = token.hasRelated() ? token.getRelated().length : 0;
+
+                String answerAttributeString;
+                String answers;
+
+                if (answersSize <= 1) {
+                    answerAttributeString = ComponentStrings.RIGHT_ANSWER;
+                    if (token.hasRelated()) {
+                        answers = "{%s}".formatted(getInlineTranslationString(token.getRelated()[0]));
+                    }
+                    else {
+                        answers = "{}";
+                    }
+                }
+                else {
+                    answerAttributeString = ComponentStrings.RIGHT_ANSWERS;
+
+                    answers = constructAnswersFromRelated(token);
+                }
+
+                this.currentElement.addElement(ComponentStrings.FULL_ANSWER_QUESTION)
+                        .addAttribute(answerAttributeString, answers)
+                        .addAttribute("isShowing", "{isShowing}")
+                        .addAttribute("noButton", "{true}")
+                        .addText(getTranslationString(token));
+
+                this.importManager.addComponentImport(ComponentStrings.FULL_ANSWER_QUESTION);
+                this.importManager.addStateImport();
             }
             case Identifiers.RESEARCH_QUESTION -> {
                 this.currentElement.addElement(ComponentStrings.RESEARCH_QUESTION)
@@ -223,6 +289,5 @@ public class Builder {
 
         sb.append("]}");
         return sb.toString();
-
     }
 }

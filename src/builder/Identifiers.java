@@ -11,6 +11,12 @@ public class Identifiers {
 
     public static final String FULL_ANSWER_QUESTION = "fq";
 
+    public static final String CONTROLLED_TEST_QUESTION = "tqc";
+
+    public static final String CONTROLLED_FULL_ANSWER_QUESTION = "fqc";
+
+    public static final String CONTROLLED_FILL_QUESTION = "fic";
+
     public static final String RESEARCH_QUESTION = "rq";
 
     public static final String CODE = "c";

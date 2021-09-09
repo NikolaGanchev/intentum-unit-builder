@@ -15,6 +15,7 @@ public class JSONView {
     private JButton nextButton;
     private JButton finishButton;
     private JButton transformToSingleLineButton;
+    private JCheckBox stopIncrementingCheckbox;
 
     public JSONView() {
         this.frame = new JFrame("Intentum JSON creator");
@@ -52,6 +53,9 @@ public class JSONView {
         JPanel buttons = new JPanel();
         buttons.setLayout(new BoxLayout(buttons, BoxLayout.Y_AXIS));
         buttons.setBorder(new EmptyBorder(10, 10, 10, 10));
+
+        stopIncrementingCheckbox = new JCheckBox("Не добавяй към ключа");
+        buttons.add(stopIncrementingCheckbox);
 
         transformToSingleLineButton = new JButton("Един ред");
         buttons.add(transformToSingleLineButton);
@@ -91,5 +95,9 @@ public class JSONView {
 
     public JButton getTransformToSingleLineButton() {
         return transformToSingleLineButton;
+    }
+
+    public JCheckBox getStopIncrementingCheckbox() {
+        return stopIncrementingCheckbox;
     }
 }

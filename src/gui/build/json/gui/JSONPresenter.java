@@ -30,6 +30,7 @@ public class JSONPresenter {
     public void initModel() {
         jsonModel.setCurrentDocument("");
         jsonModel.setCurrentKey(tokenIterator.getTokenString());
+        jsonModel.setStopIncrementing(false);
     }
 
     public void initView() {
@@ -49,6 +50,9 @@ public class JSONPresenter {
         jsonView.getFinishButton().addActionListener((ActionEvent e) -> {
             handleFinish();
         });
+        jsonView.getStopIncrementingCheckbox().addActionListener((ActionEvent e) -> {
+            jsonModel.setStopIncrementing(jsonView.getStopIncrementingCheckbox().isSelected());
+        });
         jsonView.show();
     }
 
@@ -64,6 +68,11 @@ public class JSONPresenter {
         jsonModel.addTranslationPair(jsonView.getKeyInput().getText(),
                 jsonView.getDocument().getSelectedText(), true);
         jsonView.getDocument().replaceSelection("");
+        if (jsonModel.isStopIncrementing()) {
+            jsonModel.setCurrentKey(tokenIterator.getTokenString());
+            jsonView.getKeyInput().setText(tokenIterator.getTokenString());
+            return;
+        }
         String nextKey = tokenIterator.next();
         jsonModel.setCurrentKey(nextKey);
         jsonView.getKeyInput().setText(nextKey);

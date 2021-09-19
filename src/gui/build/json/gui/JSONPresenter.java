@@ -1,13 +1,19 @@
 package gui.build.json.gui;
 
 import builder.CreateEvent;
+import builder.Identifiers;
 import builder.json.TokenIterator;
+import tokenizer.Token;
 import transformers.MultilineStringToArrayListTransformer;
 import transformers.StringArrayListToSingleLineTransformer;
 
+import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.text.TextAction;
 import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 
 public class JSONPresenter {
@@ -25,6 +31,7 @@ public class JSONPresenter {
     public void init() {
         initModel();
         initView();
+        setKeyBindings();
     }
 
     public void initModel() {
@@ -65,15 +72,30 @@ public class JSONPresenter {
     }
 
     private void handleNext() {
-        jsonModel.addTranslationPair(jsonView.getKeyInput().getText(),
+        String keyInput = jsonView.getKeyInput().getText();
+        Token token = new Token(keyInput);
+        String nextIdentifier = token.getIdentifier();
+
+        jsonModel.addTranslationPair(keyInput,
                 jsonView.getDocument().getSelectedText(), true);
+
         jsonView.getDocument().replaceSelection("");
+
+        // Don't increment if identifier is a question
+        if (Identifiers.isQuestion(token.getIdentifier())) {
+            jsonView.getStopIncrementingCheckbox().setSelected(true);
+            jsonModel.setStopIncrementing(true);
+            nextIdentifier = Identifiers.ANSWER;
+        }
+
         if (jsonModel.isStopIncrementing()) {
-            jsonModel.setCurrentKey(tokenIterator.getTokenString());
-            jsonView.getKeyInput().setText(tokenIterator.getTokenString());
+            String nextKey = tokenIterator.getTokenString() + nextIdentifier;
+            jsonModel.setCurrentKey(nextKey);
+            jsonView.getKeyInput().setText(nextKey);
             return;
         }
-        String nextKey = tokenIterator.next();
+
+        String nextKey = tokenIterator.next() + nextIdentifier;
         jsonModel.setCurrentKey(nextKey);
         jsonView.getKeyInput().setText(nextKey);
     }
@@ -102,4 +124,68 @@ public class JSONPresenter {
     public void setCreateEvent(CreateEvent createEvent) {
         this.createEvent = createEvent;
     }
+
+    private void setKeyBindings() {
+        KeyStroke next = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, InputEvent.CTRL_DOWN_MASK);
+        KeyStroke multilineToSingleLine = KeyStroke.getKeyStroke(KeyEvent.VK_MINUS, InputEvent.CTRL_DOWN_MASK);
+        KeyStroke toggleIterator = KeyStroke.getKeyStroke(KeyEvent.VK_EQUALS, InputEvent.CTRL_DOWN_MASK);
+        KeyStroke switchFocusToKeyInput = KeyStroke.getKeyStroke("UP");
+        KeyStroke switchFocusToDocument = KeyStroke.getKeyStroke("DOWN");;
+
+        jsonView.getDocument().getInputMap().put(next, "next");
+        jsonView.getDocument().getActionMap().put("next", nextAction);
+
+        jsonView.getKeyInput().getInputMap().put(next, "next");
+        jsonView.getKeyInput().getActionMap().put("next", nextAction);
+
+        jsonView.getDocument().getInputMap().put(multilineToSingleLine, "multilineToSingleLine");
+        jsonView.getDocument().getActionMap().put("multilineToSingleLine", multilineToSingleLineAction);
+
+        jsonView.getDocument().getInputMap().put(toggleIterator, "toggleIterator");
+        jsonView.getDocument().getActionMap().put("toggleIterator", toggleIteratorAction);
+
+        jsonView.getKeyInput().getInputMap().put(toggleIterator, "toggleIterator");
+        jsonView.getKeyInput().getActionMap().put("toggleIterator", toggleIteratorAction);
+
+        jsonView.getKeyInput().getInputMap().put(switchFocusToDocument, "switchFocusToDocument");
+        jsonView.getKeyInput().getActionMap().put("switchFocusToDocument", switchFocusToDocumentAction);
+
+        jsonView.getDocument().getInputMap().put(switchFocusToKeyInput, "switchFocusToKeyInput");
+        jsonView.getDocument().getActionMap().put("switchFocusToKeyInput", switchFocusToKeyInputAction);
+    }
+
+    private final AbstractAction nextAction = new AbstractAction() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            jsonView.getNextButton().doClick();
+        }
+    };
+
+    private final AbstractAction multilineToSingleLineAction = new AbstractAction() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            jsonView.getTransformToSingleLineButton().doClick();
+        }
+    };
+
+    private final AbstractAction toggleIteratorAction = new AbstractAction() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            jsonView.getStopIncrementingCheckbox().doClick();
+        }
+    };
+
+    private final AbstractAction switchFocusToDocumentAction = new AbstractAction() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            jsonView.getDocument().requestFocusInWindow();
+        }
+    };
+
+    private final AbstractAction switchFocusToKeyInputAction = new AbstractAction() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            jsonView.getKeyInput().requestFocusInWindow();
+        }
+    };
 }

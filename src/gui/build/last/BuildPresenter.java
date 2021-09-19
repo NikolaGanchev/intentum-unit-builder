@@ -2,7 +2,6 @@ package gui.build.last;
 
 import builder.*;
 import builder.json.TokenIterator;
-import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import gui.build.json.gui.JSONModel;
@@ -15,15 +14,12 @@ import transformers.DocumentToPrettyStringTransformer;
 import transformers.MultilineStringToArrayListTransformer;
 import transformers.ResultTransformer;
 import transformers.StringArrayListToSingleLineTransformer;
-
-import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 public class BuildPresenter {
@@ -86,7 +82,9 @@ public class BuildPresenter {
                 new JSONModel(new JsonObject(), new Tokenizer()),
                 new JSONView(),
                 new TokenIterator());
+
         presenter.setCreateEvent((jsonObject, tokenizer) -> {
+
             String json = new GsonBuilder().setPrettyPrinting().create().toJson(jsonObject);
             ArrayList<Token> tokens = tokenizer.tokenize();
             for (Token token: tokens) {

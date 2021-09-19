@@ -34,4 +34,13 @@ public class Identifiers {
     public static final String WARNING = "w";
     
     public static final String ANSWER = "a";
+
+    public static boolean isQuestion(String identifierToCheck) {
+        return identifierToCheck.equals(CONTROLLED_FULL_ANSWER_QUESTION) ||
+                identifierToCheck.equals(CONTROLLED_TEST_QUESTION) ||
+                identifierToCheck.equals(CONTROLLED_FILL_QUESTION) ||
+                identifierToCheck.equals(FULL_ANSWER_QUESTION) ||
+                identifierToCheck.equals(TEST_QUESTION) ||
+                identifierToCheck.equals(FILL_QUESTION);
+    }
 }

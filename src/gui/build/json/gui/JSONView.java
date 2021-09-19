@@ -54,6 +54,15 @@ public class JSONView {
         buttons.setLayout(new BoxLayout(buttons, BoxLayout.Y_AXIS));
         buttons.setBorder(new EmptyBorder(10, 10, 10, 10));
 
+        JLabel keybindingNext = new JLabel("Следващ - Ctrl + Enter");
+        buttons.add(keybindingNext);
+
+        JLabel keybindingMultilineToSingleLine = new JLabel("Един ред - Ctrl + -");
+        buttons.add(keybindingMultilineToSingleLine);
+
+        JLabel keybindingKeepIterator = new JLabel("Не добавяй към ключа - Ctrl + =");
+        buttons.add(keybindingKeepIterator);
+
         stopIncrementingCheckbox = new JCheckBox("Не добавяй към ключа");
         buttons.add(stopIncrementingCheckbox);
 

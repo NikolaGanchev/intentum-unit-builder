@@ -1,11 +1,9 @@
 package gui.build.json.gui;
 
 import builder.json.TranslationPair;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import gui.build.json.Prediction;
 import tokenizer.Tokenizer;
-
-import java.util.ArrayList;
 
 public class JSONModel {
     private String currentKey;
@@ -13,6 +11,7 @@ public class JSONModel {
     private Tokenizer tokens;
     private JsonObject jsonObject;
     private boolean stopIncrementing;
+    private Prediction prediction;
 
     public JSONModel(JsonObject obj, Tokenizer tokens) {
         this.jsonObject = obj;
@@ -57,6 +56,14 @@ public class JSONModel {
 
     public void setStopIncrementing(boolean stopIncrementing) {
         this.stopIncrementing = stopIncrementing;
+    }
+
+    public void setPrediction(Prediction prediction) {
+        this.prediction = prediction;
+    }
+
+    public Prediction getPrediction() {
+        return prediction;
     }
 
     public void addTranslationPair(TranslationPair translationPair, boolean sterialize) {

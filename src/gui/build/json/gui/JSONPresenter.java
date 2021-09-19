@@ -3,6 +3,8 @@ package gui.build.json.gui;
 import builder.CreateEvent;
 import builder.Identifiers;
 import builder.json.TokenIterator;
+import gui.build.json.Prediction;
+import gui.build.json.TranslationTextPredictionGenerator;
 import tokenizer.Token;
 import transformers.MultilineStringToArrayListTransformer;
 import transformers.StringArrayListToSingleLineTransformer;
@@ -38,12 +40,14 @@ public class JSONPresenter {
         jsonModel.setCurrentDocument("");
         jsonModel.setCurrentKey(tokenIterator.getTokenString());
         jsonModel.setStopIncrementing(false);
+        jsonModel.setPrediction(new Prediction("Няма валидни подсказвания", -1, -1));
     }
 
     public void initView() {
         jsonView.getKeyInput().setText(jsonModel.getCurrentKey());
         jsonView.getDocument().setText(jsonModel.getCurrentDocument());
         jsonView.getDocument().getDocument().addDocumentListener(changeDocumentListener);
+        jsonView.getPrediction().setText(jsonModel.getPrediction().getPrediction());
         jsonView.getTransformToSingleLineButton().addActionListener((ActionEvent e) -> {
             String selectedText = jsonView.getDocument().getSelectedText();
             MultilineStringToArrayListTransformer transformer1 = new MultilineStringToArrayListTransformer();
@@ -75,11 +79,30 @@ public class JSONPresenter {
         String keyInput = jsonView.getKeyInput().getText();
         Token token = new Token(keyInput);
         String nextIdentifier = token.getIdentifier();
+        String text;
 
-        jsonModel.addTranslationPair(keyInput,
-                jsonView.getDocument().getSelectedText(), true);
+        jsonView.getDocument().setText(jsonModel.getCurrentDocument());
+        setDocument();
 
-        jsonView.getDocument().replaceSelection("");
+        if (jsonView.getDocument().getSelectedText() != null) {
+            text = jsonView.getDocument().getSelectedText().trim();
+            jsonView.getDocument().replaceSelection("");
+        }
+        else if (jsonModel.getPrediction().getStartingIndex() != -1) {
+            text = jsonModel.getPrediction().getPrediction().trim();
+
+            jsonView.getDocument().replaceRange(null,
+                    jsonModel.getPrediction().getStartingIndex(),
+                    jsonModel.getPrediction().getEndingIndex());
+        }
+        else {
+            // There is neither a selection, nor a prediction
+            return;
+        }
+
+        updatePrediction();
+
+        jsonModel.addTranslationPair(keyInput, text, true);
 
         // Don't increment if identifier is a question
         if (Identifiers.isQuestion(token.getIdentifier())) {
@@ -101,23 +124,32 @@ public class JSONPresenter {
     }
 
     private void setDocument() {
-        jsonModel.setCurrentDocument(jsonView.getDocument().getText());
+        jsonModel.setCurrentDocument(jsonView.getDocument().getText().trim());
+    }
+
+    private void updatePrediction() {
+        Prediction prediction = TranslationTextPredictionGenerator.generatePrediction(jsonModel.getCurrentDocument());
+        jsonModel.setPrediction(prediction);
+        jsonView.getPrediction().setText(prediction.getPrediction());
     }
 
     DocumentListener changeDocumentListener = new DocumentListener() {
         @Override
         public void insertUpdate(DocumentEvent e) {
             setDocument();
+            updatePrediction();
         }
 
         @Override
         public void removeUpdate(DocumentEvent e) {
             setDocument();
+            updatePrediction();
         }
 
         @Override
         public void changedUpdate(DocumentEvent e) {
             setDocument();
+            updatePrediction();
         }
     };
 

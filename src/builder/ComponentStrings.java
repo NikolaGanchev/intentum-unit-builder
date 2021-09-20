@@ -43,6 +43,8 @@ public class ComponentStrings {
 
     public static final String END_BUTTON = "EndButton";
 
+    public static final String SWITCH = "Switch";
+
     public static final String RIGHT_ANSWER = "rightAnswer";
 
     public static final String RIGHT_ANSWERS = "rightAnswers";

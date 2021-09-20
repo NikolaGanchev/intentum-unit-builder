@@ -74,7 +74,7 @@ public class JSONModel {
                     translationPair.getTranslation().trim().replaceAll("\n", ""));
         }
         else {
-            this.jsonObject.addProperty(translationPair.getKey(), translationPair.getTranslation());
+            this.jsonObject.addProperty(translationPair.getKey(), translationPair.getTranslation().trim());
         }
     }
 

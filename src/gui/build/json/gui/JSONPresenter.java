@@ -80,16 +80,26 @@ public class JSONPresenter {
         Token token = new Token(keyInput);
         String nextIdentifier = token.getIdentifier();
         String text;
+        boolean isPartOfSwitch = Identifiers.isPartOfSwitch(token);
 
-        jsonView.getDocument().setText(jsonModel.getCurrentDocument());
-        setDocument();
+        jsonView.getLastKey().setText("Последен ключ: " + token.getToken());
+        if (token.getIdentifier().startsWith(Identifiers.DATA_SWITCH)) {
+            jsonView.getLastSwitch().setText("Последен Switch: " + token.getToken());
+        }
+
+        if (!isPartOfSwitch){
+            jsonView.getLastKey().setText("");
+        }
+
+        System.out.println(jsonView.getDocument().getSelectedText());
 
         if (jsonView.getDocument().getSelectedText() != null) {
-            text = jsonView.getDocument().getSelectedText().trim();
+            text = jsonView.getDocument().getSelectedText();
             jsonView.getDocument().replaceSelection("");
+            System.out.println(text);
         }
         else if (jsonModel.getPrediction().getStartingIndex() != -1) {
-            text = jsonModel.getPrediction().getPrediction().trim();
+            text = jsonModel.getPrediction().getPrediction();
 
             jsonView.getDocument().replaceRange(null,
                     jsonModel.getPrediction().getStartingIndex(),
@@ -105,9 +115,8 @@ public class JSONPresenter {
         jsonModel.addTranslationPair(keyInput, text, true);
 
         // Don't increment if identifier is a question
-        if (Identifiers.isQuestion(token.getIdentifier())) {
-            jsonView.getStopIncrementingCheckbox().setSelected(true);
-            jsonModel.setStopIncrementing(true);
+        if (Identifiers.isQuestion(token)) {
+            stopIncrement();
             nextIdentifier = Identifiers.ANSWER;
         }
 
@@ -118,19 +127,33 @@ public class JSONPresenter {
             return;
         }
 
-        String nextKey = tokenIterator.next() + nextIdentifier;
+        if (token.getIdentifier().startsWith(Identifiers.DATA_SWITCH)) {
+            String nextKey = tokenIterator.getTokenStringAsSToken();
+            jsonModel.setCurrentKey(nextKey);
+            jsonView.getKeyInput().setText(nextKey);
+            return;
+        }
+
+        String nextKey = tokenIterator
+                .next(isPartOfSwitch) + nextIdentifier;
         jsonModel.setCurrentKey(nextKey);
         jsonView.getKeyInput().setText(nextKey);
     }
 
     private void setDocument() {
-        jsonModel.setCurrentDocument(jsonView.getDocument().getText().trim());
+        jsonModel.setCurrentDocument(jsonView.getDocument().getText());
     }
 
     private void updatePrediction() {
-        Prediction prediction = TranslationTextPredictionGenerator.generatePrediction(jsonModel.getCurrentDocument());
+        Prediction prediction = TranslationTextPredictionGenerator
+                .generatePrediction(jsonModel.getCurrentDocument(), true);
         jsonModel.setPrediction(prediction);
         jsonView.getPrediction().setText(prediction.getPrediction());
+    }
+
+    private void stopIncrement() {
+        jsonView.getStopIncrementingCheckbox().setSelected(true);
+        jsonModel.setStopIncrementing(true);
     }
 
     DocumentListener changeDocumentListener = new DocumentListener() {

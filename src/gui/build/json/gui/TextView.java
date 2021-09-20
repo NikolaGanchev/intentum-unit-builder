@@ -4,11 +4,11 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-public class ResultView {
+public class TextView {
     private JFrame output;
 
-    public ResultView(String result) {
-        output = new JFrame("JSON изход");
+    public TextView(String result, String title) {
+        output = new JFrame(title);
         Image icon = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB_PRE);
         output.setIconImage(icon);
 

@@ -17,6 +17,8 @@ public class JSONView {
     private JButton transformToSingleLineButton;
     private JCheckBox stopIncrementingCheckbox;
     private JTextArea prediction;
+    private JLabel lastSwitch;
+    private JLabel lastKey;
 
     public JSONView() {
         this.frame = new JFrame("Intentum JSON creator");
@@ -76,13 +78,18 @@ public class JSONView {
         finishButton = new JButton("Завърши");
         buttons.add(finishButton);
 
+        lastKey = new JLabel("");
+        buttons.add(lastKey);
+
+        lastSwitch = new JLabel("");
+        buttons.add(lastSwitch);
+
         prediction = new JTextArea();
         prediction.setMaximumSize(new Dimension(buttons.getMinimumSize().width,
                 prediction.getMaximumSize().height));
         prediction.setEditable(false);
         prediction.setLineWrap(true);
         buttons.add(prediction);
-
 
         panel.add(buttons);
     }
@@ -121,5 +128,13 @@ public class JSONView {
 
     public JTextArea getPrediction() {
         return prediction;
+    }
+
+    public JLabel getLastSwitch() {
+        return lastSwitch;
+    }
+
+    public JLabel getLastKey() {
+        return lastKey;
     }
 }

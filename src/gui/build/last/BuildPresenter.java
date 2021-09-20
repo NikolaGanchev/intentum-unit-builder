@@ -7,7 +7,7 @@ import com.google.gson.JsonObject;
 import gui.build.json.gui.JSONModel;
 import gui.build.json.gui.JSONPresenter;
 import gui.build.json.gui.JSONView;
-import gui.build.json.gui.ResultView;
+import gui.build.json.gui.TextView;
 import tokenizer.Token;
 import tokenizer.Tokenizer;
 import transformers.DocumentToPrettyStringTransformer;
@@ -85,22 +85,22 @@ public class BuildPresenter {
 
         presenter.setCreateEvent((jsonObject, tokenizer) -> {
 
-            String json = new GsonBuilder().setPrettyPrinting().create().toJson(jsonObject);
-            ArrayList<Token> tokens = tokenizer.tokenize();
-            for (Token token: tokens) {
-                buildView.getInputArea().append(token.getToken() + "\n");
+            String json = new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create().toJson(jsonObject);
+            ArrayList<String> tokenStrings = tokenizer.getSanitizedTokenStrings();
+            for (String tokenString : tokenStrings) {
+                buildView.getInputArea().append(tokenString + "\n");
             }
 
             showJson(json);
 
-            build(tokens, false);
+            build(tokenizer, false);
         });
         presenter.init();
     }
 
     private void showJson(String json) {
-        ResultView resultView = new ResultView(json);
-        resultView.show();
+        TextView textView = new TextView(json, "JSON резултат");
+        textView.show();
     }
 
     private void build(Tokenizer tokenizer, boolean isMultilineToSingleLineMode) {

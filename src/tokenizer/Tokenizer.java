@@ -7,11 +7,13 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 public class Tokenizer {
-    private ArrayList<String> tokenStrings;
+    private final ArrayList<String> tokenStrings;
     private ArrayList<Token> tokens;
+    private final ArrayList<String> sanitizedTokenStrings;
 
     public Tokenizer() {
         this.tokenStrings = new ArrayList<>();
+        this.sanitizedTokenStrings = new ArrayList<>();
     }
 
     public void addString(String token) {
@@ -21,6 +23,7 @@ public class Tokenizer {
     public void clear() {
         tokenStrings.clear();
         tokens.clear();
+        sanitizedTokenStrings.clear();
     }
 
     public ArrayList<Token> tokenize() {
@@ -29,10 +32,15 @@ public class Tokenizer {
 
         for (String tokenString : tokenStrings) {
             Token token = new Token(tokenString);
+            sanitizedTokenStrings.add(token.getToken());
 
             if (token.getIdentifier().startsWith(Identifiers.ANSWER) && lastToken != null) {
                 lastToken.registerRelated(token);
-                tokens.add(token);
+                continue;
+            }
+
+            if (Identifiers.isRelatedToSwitchToken(token, lastToken)) {
+                lastToken.registerRelated(token);
                 continue;
             }
 
@@ -44,4 +52,7 @@ public class Tokenizer {
         return tokens;
     }
 
+    public ArrayList<String> getSanitizedTokenStrings() {
+        return this.sanitizedTokenStrings;
+    }
 }

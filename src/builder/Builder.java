@@ -25,6 +25,7 @@ public class Builder {
     private final ImportManager importManager;
     private Element currentElement;
     private boolean hasControlledQuestion = false;
+    private Element lastRoot;
 
 
     public Builder(String lessonToken, ArrayList<Token> tokens, LockManager lockManager, ImportManager importManager) {
@@ -257,6 +258,42 @@ public class Builder {
                         .addText(getTranslationString(token));
 
                 this.importManager.addComponentImport(ComponentStrings.WARNING);
+            }
+            case Identifiers.DATA_SWITCH -> {
+                // If the token has related, it means it is the first in the Switch chain
+                if (token.hasRelated()) {
+                    // Create new switch
+                    this.currentElement = currentElement.addElement(ComponentStrings.SWITCH);
+
+                    // Save switch element to return to
+                    this.lastRoot = currentElement;
+
+                    // Add first data-switch
+                    this.currentElement = currentElement.addElement("div")
+                            .addAttribute("data-switch", getTranslationString(token));
+
+                    // Loop through related to evaluate related
+                    for (Token relatedToken: token.getRelated()) {
+                        evaluateToken(relatedToken);
+                    }
+
+                    // Get back to Switch element
+                    this.currentElement = this.lastRoot;
+
+                    // Now, the parent of the Switch should be directly above it
+                    this.currentElement = this.currentElement.getParent();
+
+                }
+                else {
+                    // Get back to Switch element
+                    this.currentElement = this.lastRoot;
+
+                    // Add data-switch
+                    this.currentElement = currentElement.addElement("div")
+                            .addAttribute("data-switch", getTranslationString(token));
+                }
+
+                this.importManager.addComponentImport(ComponentStrings.SWITCH);
             }
         }
     }

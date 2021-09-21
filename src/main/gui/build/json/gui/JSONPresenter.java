@@ -5,9 +5,11 @@ import main.builder.Identifiers;
 import main.builder.json.TokenIterator;
 import main.gui.build.json.Prediction;
 import main.gui.build.json.TranslationTextPredictionGenerator;
+import main.gui.common.TextView;
 import main.tokenizer.Token;
 import main.transformers.MultilineStringToArrayListTransformer;
 import main.transformers.StringArrayListToSingleLineTransformer;
+import main.utils.Documentation;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -62,6 +64,10 @@ public class JSONPresenter {
         });
         jsonView.getStopIncrementingCheckbox().addActionListener((ActionEvent e) -> {
             jsonModel.setStopIncrementing(jsonView.getStopIncrementingCheckbox().isSelected());
+        });
+        jsonView.getShowDocs().addActionListener((ActionEvent e) -> {
+            TextView textView = new TextView(Documentation.getDocumentation(), "Документация");
+            textView.show();
         });
         jsonView.show();
     }

@@ -34,7 +34,7 @@ public class Token {
 
         // The loop continues until it reaches a letter
         // This fixes the problem that the number of "p1a1" would evaluate to 11 with the previous solution
-        for (int i = 0; i <= tempToken.length(); i++) {
+        for (int i = 0; i < tempToken.length(); i++) {
             if (Character.isDigit(tempToken.charAt(i))) {
                 number += tempToken.charAt(i);
             }

@@ -18,10 +18,12 @@ public class TextView {
         panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
         output.add(panel);
 
-        JTextArea textArea = new JTextArea();
-        textArea.setEditable(false);
-        textArea.setText(result);
-        JScrollPane scrollPane = new JScrollPane(textArea,
+        JTextPane textPane = new JTextPane();
+        textPane.setEditable(false);
+        textPane.setContentType("text/html");
+        textPane.setText(result);
+        textPane.putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, true);
+        JScrollPane scrollPane = new JScrollPane(textPane,
                 JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         panel.add(scrollPane);
 

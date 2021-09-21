@@ -19,6 +19,7 @@ public class JSONView {
     private JTextArea prediction;
     private JLabel lastSwitch;
     private JLabel lastKey;
+    private JButton showDocs;
 
     public JSONView() {
         this.frame = new JFrame("Intentum JSON creator");
@@ -68,6 +69,9 @@ public class JSONView {
 
         stopIncrementingCheckbox = new JCheckBox("Не добавяй към ключа");
         buttons.add(stopIncrementingCheckbox);
+
+        showDocs = new JButton("Документация");
+        buttons.add(showDocs);
 
         transformToSingleLineButton = new JButton("Един ред");
         buttons.add(transformToSingleLineButton);
@@ -136,5 +140,9 @@ public class JSONView {
 
     public JLabel getLastKey() {
         return lastKey;
+    }
+
+    public JButton getShowDocs() {
+        return showDocs;
     }
 }

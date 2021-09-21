@@ -1,7 +1,7 @@
 
-import gui.build.last.BuildModel;
-import gui.build.last.BuildPresenter;
-import gui.build.last.BuildView;
+import main.gui.build.last.BuildModel;
+import main.gui.build.last.BuildPresenter;
+import main.gui.build.last.BuildView;
 
 public class Main {
 

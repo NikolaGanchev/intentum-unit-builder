@@ -3,8 +3,8 @@
     <output-path>$PROJECT_DIR$/out/artifacts/intentum_unit_builder_jar</output-path>
     <root id="archive" name="intentum-unit-builder.jar">
       <element id="module-output" name="intentum-unit-builder" />
-      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/dom4j/dom4j/2.1.3/dom4j-2.1.3.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/google/code/gson/gson/2.8.8/gson-2.8.8.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/dom4j/dom4j/2.1.3/dom4j-2.1.3.jar" path-in-jar="/" />
     </root>
   </artifact>
 </component>

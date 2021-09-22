@@ -8,7 +8,7 @@ import java.awt.image.BufferedImage;
 public class TextView {
     private JFrame output;
 
-    public TextView(String result, String title) {
+    public TextView(String result, String title, boolean isHtml) {
         output = new JFrame(title);
         Image icon = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB_PRE);
         output.setIconImage(icon);
@@ -21,7 +21,9 @@ public class TextView {
 
         JTextPane textPane = new JTextPane();
         textPane.setEditable(false);
-        textPane.setContentType("text/html");
+        if (isHtml) {
+            textPane.setContentType("text/html");
+        }
         textPane.setText(result);
         textPane.putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, true);
         textPane.setCaretPosition(0);

@@ -50,6 +50,7 @@ public class JSONView {
 
         document = new JTextArea();
         document.setBorder(new EmptyBorder(10, 10, 10, 10));
+        document.setLineWrap(true);
         JScrollPane documentScrollPane = new JScrollPane(document,
                 JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         inputs.add(documentScrollPane);

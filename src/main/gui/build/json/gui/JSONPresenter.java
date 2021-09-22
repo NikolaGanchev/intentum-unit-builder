@@ -66,7 +66,7 @@ public class JSONPresenter {
             jsonModel.setStopIncrementing(jsonView.getStopIncrementingCheckbox().isSelected());
         });
         jsonView.getShowDocs().addActionListener((ActionEvent e) -> {
-            TextView textView = new TextView(Documentation.getDocumentation(), "Документация");
+            TextView textView = new TextView(Documentation.getDocumentation(), "Документация", true);
             textView.show();
         });
         jsonView.show();
@@ -96,12 +96,9 @@ public class JSONPresenter {
             jsonView.getLastKey().setText("");
         }
 
-        System.out.println(jsonView.getDocument().getSelectedText());
-
         if (jsonView.getDocument().getSelectedText() != null) {
             text = jsonView.getDocument().getSelectedText();
             jsonView.getDocument().replaceSelection("");
-            System.out.println(text);
         }
         else if (jsonModel.getPrediction().getStartingIndex() != -1) {
             text = jsonModel.getPrediction().getPrediction();

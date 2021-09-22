@@ -32,7 +32,6 @@ public class ImportManager {
     }
 
     public void addExpectedImports() {
-        addStateImport();
         addTranslationImport();
         addEndButtonImport();
     }

@@ -1,5 +1,6 @@
 package main.gui.build.last;
 
+import com.google.gson.JsonElement;
 import main.builder.*;
 import main.builder.json.TokenIterator;
 import com.google.gson.GsonBuilder;
@@ -10,10 +11,7 @@ import main.gui.build.json.gui.JSONView;
 import main.gui.common.TextView;
 import main.tokenizer.Token;
 import main.tokenizer.Tokenizer;
-import main.transformers.DocumentToPrettyStringTransformer;
-import main.transformers.MultilineStringToArrayListTransformer;
-import main.transformers.ResultTransformer;
-import main.transformers.StringArrayListToSingleLineTransformer;
+import main.transformers.*;
 import main.utils.Documentation;
 
 import javax.swing.event.DocumentEvent;
@@ -23,6 +21,7 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
+import java.util.Map;
 
 public class BuildPresenter {
     private BuildModel buildModel;
@@ -65,7 +64,7 @@ public class BuildPresenter {
         buildView.getCopyButton().addActionListener((ActionEvent e) -> { copyResultToClipboard(); });
         buildView.getCreateJSONButton().addActionListener((ActionEvent e) -> { initCreateJSON(); });
         buildView.getShowDocs().addActionListener((ActionEvent e) -> {
-            TextView textView = new TextView(Documentation.getDocumentation(), "Документация");
+            TextView textView = new TextView(Documentation.getDocumentation(), "Документация", true);
             textView.show();
         });
         buildView.show();
@@ -91,21 +90,22 @@ public class BuildPresenter {
 
         presenter.setCreateEvent((jsonObject, tokenizer) -> {
 
-            String json = new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create().toJson(jsonObject);
             ArrayList<String> tokenStrings = tokenizer.getSanitizedTokenStrings();
             for (String tokenString : tokenStrings) {
                 buildView.getInputArea().append(tokenString + "\n");
             }
 
-            showJson(json);
+            String json = new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create().toJson(jsonObject);
 
+            showJson(new EscapedToUnescapedStringTransformer().transform(json));
+            System.out.println(json);
             build(tokenizer, false);
         });
         presenter.init();
     }
 
     private void showJson(String json) {
-        TextView textView = new TextView(json, "JSON резултат");
+        TextView textView = new TextView(json, "JSON резултат", false);
         textView.show();
     }
 

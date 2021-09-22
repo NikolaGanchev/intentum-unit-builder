@@ -14,8 +14,6 @@ public class Token {
     public Token(String token) {
         this.token = this.normalize(token);
         this.extract();
-
-        System.out.printf("Token %s has identifier %s and number %d\n", token, identifier, number);
     }
 
     private void extract() {

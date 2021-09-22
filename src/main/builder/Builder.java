@@ -94,6 +94,7 @@ public class Builder {
             }
             case Identifiers.TEST_QUESTION -> {
                 int lockNumber = lockManager.addLock();
+                this.importManager.addStateImport();
 
                 String answers = "{}";
 
@@ -118,6 +119,7 @@ public class Builder {
             }
             case Identifiers.FULL_ANSWER_QUESTION -> {
                 int lockNumber = lockManager.addLock();
+                this.importManager.addStateImport();
                 int answersSize = token.hasRelated() ? token.getRelated().length : 0;
 
                 String answerAttributeString;
@@ -235,6 +237,7 @@ public class Builder {
             }
             case Identifiers.FILL_QUESTION -> {
                 int lockNumber = lockManager.addLock();
+                this.importManager.addStateImport();
 
                 this.currentElement.addElement(ComponentStrings.FILL_QUESTION)
                         .addAttribute("text", getTranslationString(token))
@@ -307,7 +310,7 @@ public class Builder {
 
     private void addCodeWithLanguage(Token token, String language) {
         this.currentElement.addElement(ComponentStrings.CODE)
-                .addAttribute("language", "{%s}".formatted(language))
+                .addAttribute("language", "%s".formatted(language))
                 .addAttribute("showNumbers", "true")
                 .addText(getTranslationString(token));
 

@@ -22,7 +22,7 @@ public class JSONView {
     private JButton showDocs;
 
     public JSONView() {
-        this.frame = new JFrame("Intentum JSON creator");
+        this.frame = new JFrame("Intentum JSON създател");
 
         Image icon = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB_PRE);
         frame.setIconImage(icon);

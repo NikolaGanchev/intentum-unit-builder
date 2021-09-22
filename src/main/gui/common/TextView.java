@@ -1,6 +1,7 @@
 package main.gui.common;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
@@ -23,6 +24,8 @@ public class TextView {
         textPane.setContentType("text/html");
         textPane.setText(result);
         textPane.putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, true);
+        textPane.setCaretPosition(0);
+        textPane.setBorder(new EmptyBorder(10, 10, 10, 10));
         JScrollPane scrollPane = new JScrollPane(textPane,
                 JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         panel.add(scrollPane);

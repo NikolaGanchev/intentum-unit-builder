@@ -14,6 +14,8 @@ import main.transformers.DocumentToPrettyStringTransformer;
 import main.transformers.MultilineStringToArrayListTransformer;
 import main.transformers.ResultTransformer;
 import main.transformers.StringArrayListToSingleLineTransformer;
+import main.utils.Documentation;
+
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
@@ -62,6 +64,10 @@ public class BuildPresenter {
         });
         buildView.getCopyButton().addActionListener((ActionEvent e) -> { copyResultToClipboard(); });
         buildView.getCreateJSONButton().addActionListener((ActionEvent e) -> { initCreateJSON(); });
+        buildView.getShowDocs().addActionListener((ActionEvent e) -> {
+            TextView textView = new TextView(Documentation.getDocumentation(), "Документация");
+            textView.show();
+        });
         buildView.show();
     }
 

@@ -14,9 +14,10 @@ public class BuildView {
     private JButton buildButton;
     private JButton copyButton;
     private JButton createJSONButton;
+    private JButton showDocs;
 
     public BuildView() {
-        this.frame = new JFrame("Intentum unit main.builder");
+        this.frame = new JFrame("Intentum строител на уроци");
 
         Image icon = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB_PRE);
         frame.setIconImage(icon);
@@ -29,8 +30,19 @@ public class BuildView {
         panel.setBorder(new EmptyBorder(10, 10, 10, 10));
         frame.add(panel);
 
-        this.createJSONButton = new JButton("Създай");
-        panel.add(justifyLeft(this.createJSONButton));
+        this.createJSONButton = new JButton("Създаване на JSON");
+
+        this.showDocs = new JButton("Документация");
+
+        Box topButtonBox = Box.createHorizontalBox();
+
+        topButtonBox.add(this.createJSONButton);
+        topButtonBox.add(Box.createHorizontalGlue());
+        topButtonBox.add(this.showDocs);
+
+        panel.add(topButtonBox);
+
+
 
         JLabel inputLabel = new JLabel("Вход");
         panel.add(justifyLeft(inputLabel));
@@ -56,10 +68,10 @@ public class BuildView {
         JPanel buttonPanel = new JPanel();
         panel.add(justifyLeft(buttonPanel));
 
-        this.buildButton = new JButton("Създай");
+        this.buildButton = new JButton("Построяване");
         buttonPanel.add(buildButton);
 
-        this.copyButton = new JButton("Копирай");
+        this.copyButton = new JButton("Копиране");
         buttonPanel.add(copyButton);
         buttonPanel.setMaximumSize(buttonPanel.getPreferredSize());
 
@@ -108,6 +120,10 @@ public class BuildView {
 
     public JButton getCreateJSONButton() {
         return createJSONButton;
+    }
+
+    public JButton getShowDocs() {
+        return showDocs;
     }
 
     private Component justifyLeft(Component component)  {

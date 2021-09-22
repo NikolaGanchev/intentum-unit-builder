@@ -176,7 +176,7 @@ public class Builder {
                 String answerAttributeString;
                 String answers;
 
-                if (answersSize <= 1) {
+                if (answersSize == 1) {
                     answerAttributeString = ComponentStrings.RIGHT_ANSWER;
                     if (token.hasRelated()) {
                         answers = "{%s}".formatted(getInlineTranslationString(token.getRelated()[0]));
@@ -185,10 +185,14 @@ public class Builder {
                         answers = "{}";
                     }
                 }
-                else {
+                else if (answersSize > 1) {
                     answerAttributeString = ComponentStrings.RIGHT_ANSWERS;
 
                     answers = constructAnswersFromRelated(token);
+                }
+                else {
+                    answerAttributeString = null;
+                    answers = "";
                 }
 
                 this.currentElement.addElement(ComponentStrings.FULL_ANSWER_QUESTION)

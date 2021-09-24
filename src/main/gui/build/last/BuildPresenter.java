@@ -98,7 +98,7 @@ public class BuildPresenter {
             String json = new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create().toJson(jsonObject);
 
             showJson(new EscapedToUnescapedStringTransformer().transform(json));
-            System.out.println(json);
+
             build(tokenizer, false);
         });
         presenter.init();

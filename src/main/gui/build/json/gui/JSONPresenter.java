@@ -87,13 +87,10 @@ public class JSONPresenter {
         String text;
         boolean isPartOfSwitch = Identifiers.isPartOfSwitch(token);
 
-        jsonView.getLastKey().setText("Последен ключ: " + token.getToken());
-        if (token.getIdentifier().startsWith(Identifiers.DATA_SWITCH)) {
-            jsonView.getLastSwitch().setText("Последен Switch: " + token.getToken());
-        }
-
-        if (!isPartOfSwitch){
-            jsonView.getLastKey().setText("");
+        if (jsonModel.getJsonObject().has(token.getToken())) {
+            JOptionPane.showMessageDialog(jsonView.getFrame(), "Не може да има два еднакви ключа.", "Грешка",
+                    JOptionPane.ERROR_MESSAGE);
+            return;
         }
 
         if (jsonView.getDocument().getSelectedText() != null) {
@@ -109,7 +106,19 @@ public class JSONPresenter {
         }
         else {
             // There is neither a selection, nor a prediction
+            JOptionPane.showMessageDialog(jsonView.getFrame(), "Трябва да бъде избран текст за продължаване",
+                    "Грешка",
+                    JOptionPane.ERROR_MESSAGE);
             return;
+        }
+
+        jsonView.getLastKey().setText("Последен ключ: " + token.getToken());
+        if (token.getIdentifier().startsWith(Identifiers.DATA_SWITCH)) {
+            jsonView.getLastSwitch().setText("Последен Switch: " + token.getToken());
+        }
+
+        if (!isPartOfSwitch){
+            jsonView.getLastKey().setText("");
         }
 
         updatePrediction();

@@ -7,11 +7,14 @@ public class StringArrayListToSingleLineTransformer implements Transformer<Strin
     public String transform(ArrayList<String> lines) {
         StringBuilder result = new StringBuilder();
 
-        for (String line : lines) {
-            result.append(line);
-            result.append("\\n");
+        for (int i = 0; i < lines.size(); i++) {
+            result.append(lines.get(i));
+            // Don't append newline to last line
+            if (i != lines.size() - 1) {
+                result.append("\\n");
+            }
         }
 
-        return result.toString();
+        return result.toString().trim();
     }
 }

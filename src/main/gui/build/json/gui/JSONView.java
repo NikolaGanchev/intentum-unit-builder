@@ -94,6 +94,7 @@ public class JSONView {
                 prediction.getMaximumSize().height));
         prediction.setEditable(false);
         prediction.setLineWrap(true);
+        prediction.setBorder(new EmptyBorder(10, 10, 10, 10));
         buttons.add(prediction);
 
         panel.add(buttons);

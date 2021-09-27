@@ -48,6 +48,8 @@ public class Identifiers {
 
     public static final String SWITCH_BEGINNING = "s";
 
+    public static final String REGULAR_BEGGINNING = "p";
+
     public static boolean isQuestion(Token token) {
         String identifierToCheck = token.getIdentifier();
 

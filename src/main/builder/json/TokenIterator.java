@@ -33,4 +33,8 @@ public class TokenIterator {
     public String getTokenStringAsSToken() {
         return S_TOKEN_KEY_FORMAT.formatted(counter);
     }
+
+    public void setCounter(int counter) {
+        this.counter = counter;
+    }
 }

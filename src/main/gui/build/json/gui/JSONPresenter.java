@@ -64,6 +64,7 @@ public class JSONPresenter {
         });
         jsonView.getStopIncrementingCheckbox().addActionListener((ActionEvent e) -> {
             jsonModel.setStopIncrementing(jsonView.getStopIncrementingCheckbox().isSelected());
+            jsonModel.setManuallyActivatedStopIncrement(jsonView.getStopIncrementingCheckbox().isSelected());
         });
         jsonView.getShowDocs().addActionListener((ActionEvent e) -> {
             TextView textView = new TextView(Documentation.getDocumentation(), "Документация", true);
@@ -96,6 +97,7 @@ public class JSONPresenter {
         if (jsonView.getDocument().getSelectedText() != null) {
             text = jsonView.getDocument().getSelectedText();
             jsonView.getDocument().replaceSelection("");
+            trimDocument();
         }
         else if (jsonModel.getPrediction().getStartingIndex() != -1) {
             text = jsonModel.getPrediction().getPrediction();
@@ -103,6 +105,7 @@ public class JSONPresenter {
             jsonView.getDocument().replaceRange(null,
                     jsonModel.getPrediction().getStartingIndex(),
                     jsonModel.getPrediction().getEndingIndex());
+            trimDocument();
         }
         else {
             // There is neither a selection, nor a prediction
@@ -118,28 +121,24 @@ public class JSONPresenter {
         }
 
         if (!isPartOfSwitch){
-            jsonView.getLastKey().setText("");
+            jsonView.getLastSwitch().setText("");
         }
 
         updatePrediction();
 
         jsonModel.addTranslationPair(keyInput, text, true);
 
-        // Don't increment if identifier is a question
-        if (Identifiers.isQuestion(token)) {
-            stopIncrement();
+        // Don't increment if identifier is a question or answer
+        if (Identifiers.isQuestion(token) || token.getIdentifier().equals(Identifiers.ANSWER)) {
             nextIdentifier = Identifiers.ANSWER;
+            stopIncrement();
+        }
+        else if (jsonModel.isStopIncrementing() && !jsonModel.isManuallyActivatedStopIncrement()) {
+            reactivateIncrement();
         }
 
         if (jsonModel.isStopIncrementing()) {
             String nextKey = tokenIterator.getTokenString() + nextIdentifier;
-            jsonModel.setCurrentKey(nextKey);
-            jsonView.getKeyInput().setText(nextKey);
-            return;
-        }
-
-        if (token.getIdentifier().startsWith(Identifiers.DATA_SWITCH)) {
-            String nextKey = tokenIterator.getTokenStringAsSToken();
             jsonModel.setCurrentKey(nextKey);
             jsonView.getKeyInput().setText(nextKey);
             return;
@@ -153,6 +152,17 @@ public class JSONPresenter {
 
     private void setDocument() {
         jsonModel.setCurrentDocument(jsonView.getDocument().getText());
+    }
+
+    private void reactivateIncrement() {
+        tokenIterator.next();
+        jsonView.getStopIncrementingCheckbox().setSelected(false);
+        jsonModel.setStopIncrementing(false);
+    }
+
+    private void trimDocument() {
+        String trimmed = jsonView.getDocument().getText().trim();
+        jsonView.getDocument().setText(trimmed);
     }
 
     private void updatePrediction() {

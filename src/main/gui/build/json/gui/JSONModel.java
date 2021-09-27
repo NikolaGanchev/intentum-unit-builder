@@ -12,6 +12,7 @@ public class JSONModel {
     private JsonObject jsonObject;
     private boolean stopIncrementing;
     private Prediction prediction;
+    private boolean manuallyActivatedStopIncrement;
 
     public JSONModel(JsonObject obj, Tokenizer tokens) {
         this.jsonObject = obj;
@@ -80,5 +81,13 @@ public class JSONModel {
 
     public void addTranslationPair(String key, String translation, boolean sterialize) {
         addTranslationPair(new TranslationPair(key, translation), sterialize);
+    }
+
+    public boolean isManuallyActivatedStopIncrement() {
+        return manuallyActivatedStopIncrement;
+    }
+
+    public void setManuallyActivatedStopIncrement(boolean manuallyActivatedStopIncrement) {
+        this.manuallyActivatedStopIncrement = manuallyActivatedStopIncrement;
     }
 }

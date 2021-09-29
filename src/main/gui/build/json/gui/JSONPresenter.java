@@ -163,6 +163,7 @@ public class JSONPresenter {
     private void trimDocument() {
         String trimmed = jsonView.getDocument().getText().trim();
         jsonView.getDocument().setText(trimmed);
+        jsonView.getDocument().setCaretPosition(0);
     }
 
     private void updatePrediction() {

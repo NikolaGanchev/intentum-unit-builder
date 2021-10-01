@@ -1,4 +1,4 @@
-package main.gui.build.json;
+package main.json;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

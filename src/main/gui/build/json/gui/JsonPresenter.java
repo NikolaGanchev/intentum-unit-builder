@@ -3,8 +3,10 @@ package main.gui.build.json.gui;
 import main.builder.CreateEvent;
 import main.builder.Identifiers;
 import main.builder.json.TokenIterator;
-import main.gui.build.json.Prediction;
-import main.gui.build.json.TranslationTextPredictionGenerator;
+import main.gui.build.last.exceptions.KeyAlreadyExistsException;
+import main.json.JsonCreatorManager;
+import main.json.Prediction;
+import main.json.TranslationTextPredictionGenerator;
 import main.gui.common.TextView;
 import main.tokenizer.Token;
 import main.transformers.MultilineStringToArrayListTransformer;
@@ -19,27 +21,37 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 
-public class JSONPresenter {
-    private JSONModel jsonModel;
-    private JSONView jsonView;
-    private TokenIterator tokenIterator;
+public class JsonPresenter {
+    private JsonModel jsonModel;
+    private JsonView jsonView;
     private CreateEvent createEvent;
+    private boolean manuallyActivatedStopIncrement;
+    private JsonCreatorManager jsonCreatorManager;
 
-    public JSONPresenter(JSONModel jsonModel, JSONView jsonView, TokenIterator tokenIterator) {
+    public JsonPresenter(JsonModel jsonModel, JsonView jsonView, JsonCreatorManager jsonCreatorManager) {
         this.jsonModel = jsonModel;
         this.jsonView = jsonView;
-        this.tokenIterator = tokenIterator;
+        this.jsonCreatorManager = jsonCreatorManager;
     }
 
     public void init() {
         initModel();
         initView();
         setKeyBindings();
+        this.jsonCreatorManager.setIsIncrementingEvent((boolean oldValue, boolean isIncrementing) -> {
+            if (isIncrementing) {
+                reactivateIncrement();
+            }
+            else {
+                stopIncrement();
+            }
+        });
+        jsonCreatorManager.setIncrementing(!jsonModel.isStopIncrementing());
     }
 
     public void initModel() {
         jsonModel.setCurrentDocument("");
-        jsonModel.setCurrentKey(tokenIterator.getTokenString());
+        jsonModel.setCurrentKey(jsonCreatorManager.getCurrentKey());
         jsonModel.setStopIncrementing(false);
         jsonModel.setPrediction(new Prediction("Няма валидни подсказвания", -1, -1));
     }
@@ -64,7 +76,8 @@ public class JSONPresenter {
         });
         jsonView.getStopIncrementingCheckbox().addActionListener((ActionEvent e) -> {
             jsonModel.setStopIncrementing(jsonView.getStopIncrementingCheckbox().isSelected());
-            jsonModel.setManuallyActivatedStopIncrement(jsonView.getStopIncrementingCheckbox().isSelected());
+            manuallyActivatedStopIncrement = jsonView.getStopIncrementingCheckbox().isSelected();
+            jsonCreatorManager.setIncrementing(!jsonModel.isStopIncrementing());
         });
         jsonView.getShowDocs().addActionListener((ActionEvent e) -> {
             TextView textView = new TextView(Documentation.getDocumentation(), "Документация", true);
@@ -75,7 +88,7 @@ public class JSONPresenter {
 
     private void handleFinish() {
         if (createEvent != null) {
-            createEvent.jsonCreated(jsonModel.getJsonObject(), jsonModel.getTokens());
+            createEvent.jsonCreated(jsonCreatorManager.getJsonObject(), jsonCreatorManager.getTokenizer());
         }
         // Close window
         jsonView.getFrame().dispatchEvent(new WindowEvent(jsonView.getFrame(), WindowEvent.WINDOW_CLOSING));
@@ -84,11 +97,13 @@ public class JSONPresenter {
     private void handleNext() {
         String keyInput = jsonView.getKeyInput().getText();
         Token token = new Token(keyInput);
-        String nextIdentifier = token.getIdentifier();
+        String key;
         String text;
-        boolean isPartOfSwitch = Identifiers.isPartOfSwitch(token);
 
-        if (jsonModel.getJsonObject().has(token.getToken())) {
+        // Get the next key
+        try {
+            key = jsonCreatorManager.getNextKey(token, manuallyActivatedStopIncrement);
+        } catch (KeyAlreadyExistsException e) {
             JOptionPane.showMessageDialog(jsonView.getFrame(), "Не може да има два еднакви ключа.", "Грешка",
                     JOptionPane.ERROR_MESSAGE);
             return;
@@ -116,38 +131,21 @@ public class JSONPresenter {
         }
 
         jsonView.getLastKey().setText("Последен ключ: " + token.getToken());
+
         if (token.getIdentifier().startsWith(Identifiers.DATA_SWITCH)) {
             jsonView.getLastSwitch().setText("Последен Switch: " + token.getToken());
         }
 
-        if (!isPartOfSwitch){
+        if (!Identifiers.isPartOfSwitch(token)){
             jsonView.getLastSwitch().setText("");
         }
 
         updatePrediction();
 
-        jsonModel.addTranslationPair(keyInput, text, true);
+        jsonCreatorManager.addTranslationPair(keyInput, text, true);
 
-        // Don't increment if identifier is a question or answer
-        if (Identifiers.isQuestion(token) || token.getIdentifier().equals(Identifiers.ANSWER)) {
-            nextIdentifier = Identifiers.ANSWER;
-            stopIncrement();
-        }
-        else if (jsonModel.isStopIncrementing() && !jsonModel.isManuallyActivatedStopIncrement()) {
-            reactivateIncrement();
-        }
-
-        if (jsonModel.isStopIncrementing()) {
-            String nextKey = tokenIterator.getTokenString() + nextIdentifier;
-            jsonModel.setCurrentKey(nextKey);
-            jsonView.getKeyInput().setText(nextKey);
-            return;
-        }
-
-        String nextKey = tokenIterator
-                .next(isPartOfSwitch) + nextIdentifier;
-        jsonModel.setCurrentKey(nextKey);
-        jsonView.getKeyInput().setText(nextKey);
+        jsonModel.setCurrentKey(key);
+        jsonView.getKeyInput().setText(key);
     }
 
     private void setDocument() {
@@ -155,7 +153,6 @@ public class JSONPresenter {
     }
 
     private void reactivateIncrement() {
-        tokenIterator.next();
         jsonView.getStopIncrementingCheckbox().setSelected(false);
         jsonModel.setStopIncrementing(false);
     }
@@ -167,8 +164,7 @@ public class JSONPresenter {
     }
 
     private void updatePrediction() {
-        Prediction prediction = TranslationTextPredictionGenerator
-                .generatePrediction(jsonModel.getCurrentDocument(), true);
+        Prediction prediction = jsonCreatorManager.getPrediction(jsonModel.getCurrentDocument());
         jsonModel.setPrediction(prediction);
         jsonView.getPrediction().setText(prediction.getPrediction());
     }

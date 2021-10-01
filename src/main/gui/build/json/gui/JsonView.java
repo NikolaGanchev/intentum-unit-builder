@@ -7,7 +7,7 @@ import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-public class JSONView {
+public class JsonView {
 
     private JFrame frame;
     private JTextField keyInput;
@@ -21,7 +21,7 @@ public class JSONView {
     private JLabel lastKey;
     private JButton showDocs;
 
-    public JSONView() {
+    public JsonView() {
         this.frame = new JFrame("Intentum JSON създател");
 
         Image icon = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB_PRE);

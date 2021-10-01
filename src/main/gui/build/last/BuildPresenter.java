@@ -1,14 +1,14 @@
 package main.gui.build.last;
 
-import com.google.gson.JsonElement;
 import main.builder.*;
 import main.builder.json.TokenIterator;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
-import main.gui.build.json.gui.JSONModel;
-import main.gui.build.json.gui.JSONPresenter;
-import main.gui.build.json.gui.JSONView;
+import main.gui.build.json.gui.JsonModel;
+import main.gui.build.json.gui.JsonPresenter;
+import main.gui.build.json.gui.JsonView;
 import main.gui.common.TextView;
+import main.json.JsonCreatorManager;
 import main.tokenizer.Token;
 import main.tokenizer.Tokenizer;
 import main.transformers.*;
@@ -21,7 +21,6 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
-import java.util.Map;
 
 public class BuildPresenter {
     private BuildModel buildModel;
@@ -83,10 +82,10 @@ public class BuildPresenter {
     }
 
     private void initCreateJSON() {
-        JSONPresenter presenter = new JSONPresenter(
-                new JSONModel(new JsonObject(), new Tokenizer()),
-                new JSONView(),
-                new TokenIterator());
+        JsonPresenter presenter = new JsonPresenter(
+                new JsonModel(),
+                new JsonView(),
+                new JsonCreatorManager(new JsonObject(), new Tokenizer(), new TokenIterator()));
 
         presenter.setCreateEvent((jsonObject, tokenizer) -> {
 

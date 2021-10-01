@@ -1,4 +1,4 @@
-package main.gui.build.json;
+package main.json;
 
 public class Prediction {
     private String prediction;
